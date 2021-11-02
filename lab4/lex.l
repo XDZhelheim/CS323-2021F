@@ -30,6 +30,7 @@ empty [ \n\r\t]
 
 {string} { return STRING; }
 {number} { return NUMBER; }
+-?0{int}{frac}?{exp}? { printf("lexical error: %s\n", yytext); }
 
 {empty} {}
 

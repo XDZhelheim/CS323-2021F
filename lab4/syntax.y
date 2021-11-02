@@ -19,26 +19,41 @@ Value:
     | TRUE
     | FALSE
     | VNULL
+    | Object Values error { puts("Extra value after close, recovered"); }
     ;
 Object:
       LC RC
     | LC Members RC
+    | LC Members COMMA error { puts("Comma instead of closing brace, recovered"); }
     ;
 Members:
       Member
     | Member COMMA Members
+    | Member COMMA error { puts("Extra comma, recovered"); }
     ;
 Member:
       STRING COLON Value
+    | STRING COLON COLON error { puts("Double colon, recovered"); }
+    | STRING Value error { puts("Missing colon, recovered"); }
+    | STRING COMMA Value error { puts("Comma instead of colon, recovered"); }
+    | STRING COLON Value COMMA RC error { puts("Extra comma, recovered"); }
+    | STRING COLON Value COMMA error { puts("Comma instead of closing brace, recovered"); }
     ;
 Array:
       LB RB
     | LB Values RB
     | LB Values RC error { puts("unmatched right bracket, recovered"); }
+    | LB Values error { puts("Unclosed array, recovered"); }
+    | LB Value RB COMMA error { puts("Comma after the close, recovered"); }
+    | LB Value RB RB error { puts("Extra close, recovered"); }
     ;
 Values:
       Value
     | Value COMMA Values
+    | Value COMMA error { puts("Extra comma, recovered"); }
+    | Value COMMA COMMA error { puts("double extra comma, recovered"); }
+    | Value COLON Values error { puts("Colon instead of comma, recovered"); }
+    | COMMA Values error { puts("missing value, recovered"); }
     ;
 %%
 

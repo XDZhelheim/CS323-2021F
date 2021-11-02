@@ -56,30 +56,89 @@ void linked_list_append(node *head, int val){
 
 /* your implementation goes here */
 
-void linked_list_insert(node *head, int val, int index){
+void linked_list_insert(node *head, int val, int index) {
+    if (index<0 || index>head->count)
+        return;
 
+    node *new_node = (node*)malloc(sizeof(node));
+    new_node->value = val;
+    head->count++;
+
+    node *cur = head;
+    while (index--)
+        cur=cur->next;
+
+    node *nxt=cur->next;
+    cur->next=new_node;
+    new_node->next=nxt;
 }
 
 void linked_list_delete(node *head, int index){
-
+    if (index<0 || index>=head->count)
+        return;
+    node *cur = head;
+    while (index--)
+        cur=cur->next;
+    node *nxt=cur->next=cur->next->next;
+    head->count--;
 }
 
 void linked_list_remove(node *head, int val){
+    node *cur=head->next;
+    node *before=head;
 
+    while (cur && cur->value!=val) {
+        before=cur;
+        cur=cur->next;
+    }
+
+    if (cur) {
+        before->next=cur->next;
+        head->count--;
+    }
 }
 
 void linked_list_remove_all(node *head, int val){
+    node *before=head;
 
+    for (node *cur=head->next;cur;cur=cur->next) {
+        if (cur->value==val) {
+            before->next=cur->next;
+            head->count--;
+        }
+        else
+            before=before->next;
+    }
 }
 
 int linked_list_get(node *head, int index){
-    return 0;
+    if (index<0 || index>=head->count)
+        return -0x80000000;
+    
+    node *cur = head->next;
+    while (index--)
+        cur=cur->next;
+    return cur->value;
 }
 
 int linked_list_search(node *head, int val){
-    return 0;
+    int index=0;
+    for (node *cur=head->next;cur;cur=cur->next) {
+        if (cur->value==val)
+            return index;
+        index++;
+    }
+    return -1;
 }
 
 node *linked_list_search_all(node *head, int val){
-    return linked_list_init();
+    node *new_head=linked_list_init();
+
+    int index=0;
+    for (node *cur=head->next;cur;cur=cur->next) {
+        if (cur->value==val)
+            linked_list_append(new_head, index);
+        index++;
+    }
+    return new_head;
 }
